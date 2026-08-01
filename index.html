@@ -121,12 +121,12 @@
   <div class="sub">Wortschatz &amp; Satzbau · Quelle: Deutsch mit Shakil (A1 / A2 / B1) · 5.168 Wörter</div>
 
   <nav class="tabs">
-    <button data-view="learn" class="active">📇 Karteikarten</button>
     <button data-view="table">📖 Wortliste</button>
-    <button data-view="custom">➕ Eigene Wörter</button>
+    <button data-view="learn" class="active">📇 Karteikarten</button>
     <button data-view="quiz">✅ Quiz</button>
     <button data-view="satzquiz">🌐 Satzübersetzung</button>
     <button data-view="satz">✍️ Satzpraxis (B1)</button>
+    <button data-view="custom">➕ Eigene Wörter</button>
     <button data-view="stats">📊 Statistik</button>
   </nav>
 
@@ -143,6 +143,10 @@
             <option value="B1">B1</option>
             <option value="EIGENE">Eigene Wörter</option>
           </select>
+        </div>
+        <div>
+          <label>Kapitel</label>
+          <select id="learnUnit"><option value="ALL">Alle Kapitel</option></select>
         </div>
         <div>
           <label>Nur noch zu lernen</label>
@@ -196,6 +200,10 @@
             <option value="B1">B1</option>
             <option value="EIGENE">Eigene Wörter</option>
           </select>
+        </div>
+        <div>
+          <label>Kapitel</label>
+          <select id="tableUnit"><option value="ALL">Alle Kapitel</option></select>
         </div>
         <div>
           <label>Sortieren</label>
@@ -304,6 +312,10 @@
             <option value="B1">B1</option>
             <option value="EIGENE">Eigene Wörter</option>
           </select>
+        </div>
+        <div>
+          <label>Kapitel</label>
+          <select id="quizUnit"><option value="ALL">Alle Kapitel</option></select>
         </div>
         <div>
           <label>Richtung</label>
@@ -542,9 +554,10 @@ let deck = [];
 let deckIdx = 0;
 let flipped = false;
 
-function filteredVocab({level, onlyWeak, search}={}){
+function filteredVocab({level, unit, onlyWeak, search}={}){
   let list = allVocab();
   if(level && level!=='ALL') list = list.filter(v=>v.lvl===level);
+  if(unit && unit!=='ALL') list = list.filter(v=>v.u===unit);
   if(onlyWeak) list = list.filter(v=>getBox(v.id) < 3);
   if(search){
     const s = search.toLowerCase();
@@ -555,9 +568,10 @@ function filteredVocab({level, onlyWeak, search}={}){
 
 function buildDeck(){
   const level = document.getElementById('learnLevel').value;
+  const unit = document.getElementById('learnUnit').value;
   const onlyWeak = document.getElementById('learnOnlyWeak').value === '1';
   const search = document.getElementById('learnSearch').value.trim();
-  deck = shuffle(filteredVocab({level, onlyWeak, search}));
+  deck = shuffle(filteredVocab({level, unit, onlyWeak, search}));
   deckIdx = 0;
   document.getElementById('learnCount').textContent = deck.length + ' Karten in dieser Auswahl';
   showCard();
@@ -626,6 +640,7 @@ document.getElementById('fcWeak').addEventListener('click', ()=>{
   bump(deck[deckIdx].id, false); nextCard();
 });
 document.getElementById('learnLevel').addEventListener('change', buildDeck);
+document.getElementById('learnUnit').addEventListener('change', buildDeck);
 document.getElementById('learnOnlyWeak').addEventListener('change', buildDeck);
 document.getElementById('learnShuffle').addEventListener('click', buildDeck);
 let searchTimer;
@@ -753,9 +768,10 @@ function sortVocabList(list, sortBy){
 }
 function buildTable(){
   const level = document.getElementById('tableLevel').value;
+  const unit = document.getElementById('tableUnit').value;
   const search = document.getElementById('tableSearch').value.trim();
   const sortBy = document.getElementById('tableSort').value;
-  let list = filteredVocab({level, search});
+  let list = filteredVocab({level, unit, search});
   list = sortVocabList(list, sortBy);
   tableFiltered = list;
   tableShown = 0;
@@ -782,6 +798,7 @@ function appendTableRows(){
   document.getElementById('tableShownCount').textContent = 'Zeige ' + tableShown + ' von ' + tableFiltered.length;
 }
 document.getElementById('tableLevel').addEventListener('change', buildTable);
+document.getElementById('tableUnit').addEventListener('change', buildTable);
 document.getElementById('tableSort').addEventListener('change', buildTable);
 document.getElementById('tableLoadMore').addEventListener('click', appendTableRows);
 let tableSearchTimer;
@@ -798,10 +815,11 @@ let quizCfg = {};
 
 function buildQuizQuestions(){
   const level = document.getElementById('quizLevel').value;
+  const unit = document.getElementById('quizUnit').value;
   const dir = document.getElementById('quizDir').value;
   const len = parseInt(document.getElementById('quizLen').value,10);
   const weighted = document.getElementById('quizWeighted').value === '1';
-  let pool = filteredVocab({level});
+  let pool = filteredVocab({level, unit});
   if(dir === 'artikel') pool = pool.filter(v=>v.a);
   if(pool.length === 0) return [];
   let chosen;
@@ -1176,6 +1194,18 @@ document.getElementById('resetProgress').addEventListener('click', ()=>{
 });
 
 /* ===================== INIT ===================== */
+function populateUnitSelects(){
+  const units = [...new Set(VOCAB.map(v=>v.u))].filter(u=>u && u!=='–').sort((a,b)=>parseInt(a)-parseInt(b));
+  ['learnUnit','tableUnit','quizUnit'].forEach(id=>{
+    const sel = document.getElementById(id);
+    units.forEach(u=>{
+      const o = document.createElement('option');
+      o.value = u; o.textContent = 'Kapitel ' + u;
+      sel.appendChild(o);
+    });
+  });
+}
+populateUnitSelects();
 buildDeck();
 buildTable();
 renderCustomList();
