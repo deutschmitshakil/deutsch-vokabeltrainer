@@ -7,26 +7,26 @@
 <style>
   :root{
     --a1:#2e9e5b; --a2:#2b6fd1; --b1:#7a3fc9;
-    --bg:#f6f5f2; --card:#ffffff; --ink:#232323; --muted:#6b6b6b;
-    --line:#e4e1da; --good:#2e9e5b; --bad:#d1462b; --warn:#c98a1f;
-    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 8px 20px rgba(0,0,0,.05);
+    --bg:#f8fafc; --card:#ffffff; --ink:#232323; --muted:#6b6b6b;
+    --line:#e2e8f0; --good:#2e9e5b; --bad:#d1462b; --warn:#c98a1f;
+    --shadow: 0 1px 3px rgba(0,0,0,.04), 0 8px 20px rgba(0,0,0,.04);
   }
   *{box-sizing:border-box;}
   /* Dark mode */
   body.dark{
-    --bg:#121212; --card:#1d1d1d; --ink:#f2f2f2; --muted:#a9a9a9;
-    --line:#343434; --shadow:0 1px 3px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.25);
+    --bg:#0f172a; --card:#1e293b; --ink:#f2f2f2; --muted:#a9a9a9;
+    --line:#334155; --shadow:0 1px 3px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.25);
   }
   body.dark select, body.dark input[type=text], body.dark input[type=number], body.dark textarea{
-    background:#242424; color:var(--ink); border-color:var(--line);
+    background:#1e293b; color:var(--ink); border-color:var(--line);
   }
-  body.dark .flashcard{background:#202020;}
+  body.dark .flashcard{background:#1e293b;}
   body.dark .flashcard .example{color:#c9c9c9;}
-  body.dark .opt-btn{background:#242424; color:var(--ink);}
-  body.dark .blocks-assembled{background:#202020;}
-  body.dark #vocabTableBody tr:nth-child(even){background:#202020;}
+  body.dark .opt-btn{background:#1e293b; color:var(--ink);}
+  body.dark .blocks-assembled{background:#1e293b;}
+  body.dark #vocabTableBody tr:nth-child(even){background:#1e293b;}
   body.dark .banner{background:#2a2518; border-color:#51451f; color:#e4d59b;}
-  body.dark .satz-model, body.dark #satzModel{background:#242424 !important;}
+  body.dark .satz-model, body.dark #satzModel{background:#1e293b !important;}
   .article-der{color:var(--a2);font-weight:700;}
   .article-die{color:var(--bad);font-weight:700;}
   .article-das{color:var(--good);font-weight:700;} .article-der-die{color:var(--a2);font-weight:700;}
@@ -84,6 +84,7 @@
   .pill.A1{background:var(--a1);} .pill.A2{background:var(--a2);} .pill.B1{background:var(--b1);} .pill.EIGENE{background:var(--warn);}
   /* Flashcards */
   #flashArea{display:flex; flex-direction:column; align-items:center; padding:6px 0 2px;}
+  #atArea{display:flex; flex-direction:column; align-items:center; padding:6px 0 2px;}
   .flashcard{
     width:100%; max-width:520px; min-height:230px; border-radius:20px; background:#fff;
     border:1px solid var(--line); box-shadow:var(--shadow); display:flex; flex-direction:column;
@@ -96,8 +97,9 @@
   .flashcard .hint{color:var(--muted); font-size:.85rem;}
   .flashcard .example{margin-top:14px; font-size:.95rem; color:#444; font-style:italic; max-width:440px;}
   .flashcard .flip-hint{position:absolute; bottom:10px; font-size:.72rem; color:#bbb;}
-  .flash-actions{display:flex; gap:10px; margin-top:16px; width:100%; max-width:520px;}
+  .flash-actions{display:flex; gap:10px; margin-top:16px; width:100%; max-width:520px; align-items:center;}
   .flash-actions button{flex:1;}
+  .flashcard{touch-action:pan-y;}
   .box-meter{display:flex; gap:3px; margin-top:6px;}
   .box-meter span{width:14px; height:5px; border-radius:3px; background:#e2e2e2;}
   .box-meter span.on{background:var(--good);}
@@ -134,8 +136,27 @@
 
   #vocabTableBody tr:nth-child(even){background:#faf9f6;}
   #vocabTableBody td{padding:8px 6px; border-bottom:1px solid var(--line); vertical-align:top;}
-  #vocabTableBody td.ex{color:#555; font-style:italic;}
+  #vocabTableBody td.ex{color:#334155; font-style:italic;}
+  body.dark #vocabTableBody td.ex {
+    color: #ffffff; /* White for dark mode */
+  }
   table.vocab-table th{font-size:.78rem; text-transform:uppercase; letter-spacing:.03em; color:var(--muted);}
+/* Fix for active/selected tab text in Dark Mode */
+.dark body button.active, 
+.dark .tab-btn.active, 
+body.dark button.active, 
+body.dark .tab-btn.active {
+  color: #1e293b !important; /* Makes the selected text dark gray so it's readable on the white background */
+}
+/* Fix for Satzpraxis word buttons in Dark Mode */
+.dark .word-btn, 
+body.dark .word-btn,
+.dark button.word-btn,
+body.dark button.word-btn,
+.dark .satzpraxis-container button,
+body.dark .satzpraxis-container button {
+  color: #ffffff !important; /* Makes the text pure white in dark mode */
+}
 </style>
 </head>
 <body>
@@ -147,13 +168,13 @@
   </div>
 
   <nav class="tabs">
-    <button data-view="table">📖 Wortliste</button>
-    <button data-view="learn" class="active">📇 Karteikarten</button>
+    <button data-view="table">📖 Word List</button>
+    <button data-view="learn" class="active">📇 Flashcards</button>
     <button data-view="quiz">✅ Quiz</button>
-    <button data-view="satzquiz">🌐 Satzübersetzung</button>
-    <button data-view="satz">✍️ Satzpraxis (B1)</button>
+    <button data-view="artikel">🏷️ Artikel Trainer</button>
+    <button data-view="satzquiz">🌐 Sentence Translation</button>
+    <button data-view="satz">✍️ Sentance Practice (B1)</button>
     <button data-view="custom">➕ Eigene Wörter</button>
-    <button data-view="stats">📊 Statistik</button>
   </nav>
 
   <!-- LEARN -->
@@ -161,7 +182,7 @@
     <div class="card">
       <div class="row">
         <div>
-          <label>Niveau</label>
+          <label>LEVEL</label>
           <select id="learnLevel">
             <option value="ALL">Alle (A1–B1 + Eigene)</option>
             <option value="A1">A1</option>
@@ -171,7 +192,7 @@
           </select>
         </div>
         <div>
-          <label>Kapitel</label>
+          <label>Chapter</label>
           <select id="learnUnit"><option value="ALL">Alle Kapitel</option></select>
         </div>
         <div>
@@ -207,8 +228,8 @@
         </div>
         <button class="btn ghost audio-btn" id="fcSpeak" type="button">🔊 Aussprache</button>
         <div class="flash-actions">
-          <button class="btn bad" id="fcWeak">😵 Muss ich üben</button>
-          <button class="btn good" id="fcKnow">✅ Kenn ich schon</button>
+          <button class="btn ghost fc-nav" id="fcPrev" type="button" aria-label="Vorherige Karte">← Zurück</button>
+          <button class="btn ghost fc-nav" id="fcNext" type="button" aria-label="Nächste Karte">Weiter →</button>
         </div>
       </div>
     </div>
@@ -502,26 +523,68 @@
     </div>
   </section>
 
-  <!-- STATS -->
-  <section class="view" id="view-stats">
-    <div class="grid2">
-      <div class="card">
-        <div class="kicker" style="margin-bottom:10px;">Wortschatz-Fortschritt</div>
-        <div id="statsWords"></div>
-      </div>
-      <div class="card">
-        <div class="kicker" style="margin-bottom:10px;">Quiz-Verlauf</div>
-        <div id="statsQuiz"></div>
+  <!-- ARTIKEL TRAINER -->
+  <section class="view" id="view-artikel">
+    <div class="card">
+      <div class="row">
+        <div>
+          <label>LEVEL</label>
+          <select id="atLevel">
+            <option value="ALL">Alle (A1–B1 + Eigene)</option>
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="B1">B1</option>
+            <option value="EIGENE">Eigene Wörter</option>
+          </select>
+        </div>
+        <div>
+          <label>Chapter</label>
+          <select id="atUnit"><option value="ALL">Alle Kapitel</option></select>
+        </div>
+        <div>
+          <label>Nur noch zu lernen</label>
+          <select id="atOnlyWeak">
+            <option value="0">Alle Karten</option>
+            <option value="1">Nur ungelernte / schwache</option>
+          </select>
+        </div>
+        <div style="flex:1; min-width:160px;">
+          <label>Suche</label>
+          <input type="text" id="atSearch" placeholder="z.B. Urlaub, holiday...">
+        </div>
+        <div style="align-self:flex-end;">
+          <button class="btn ghost" id="atShuffle">🔀 Neu mischen</button>
+        </div>
       </div>
     </div>
-    <div class="card">
-      <div class="kicker" style="margin-bottom:10px;">Satzpraxis</div>
-      <div id="statsSatz"></div>
-    </div>
-    <div class="card">
-      <a class="reset-link" id="resetProgress">Gesamten Fortschritt zurücksetzen</a>
+
+    <div class="card" style="text-align:center;">
+      <div class="muted" id="atCount" style="margin-bottom:8px; font-size:.85rem;"></div>
+      <div id="atArea">
+        <div class="flashcard" id="atCard" style="cursor:default;">
+          <div class="top">
+            <span class="pill" id="atLvl">A1</span>
+            <span class="muted" id="atUnitLabel" style="font-size:.75rem;"></span>
+          </div>
+          <div class="word" id="atWord">–</div>
+          <div class="hint" id="atHint" style="margin-top:6px;"></div>
+          <div class="example" id="atFeedback" style="margin-top:16px; font-style:normal; font-weight:600;"></div>
+          <div class="box-meter" id="atBox"></div>
+        </div>
+        <div class="quiz-opts" id="atOpts" style="max-width:520px; margin:16px auto 0; grid-template-columns:1fr 1fr 1fr;">
+          <button class="opt-btn" data-art="der" type="button">der</button>
+          <button class="opt-btn" data-art="die" type="button">die</button>
+          <button class="opt-btn" data-art="das" type="button">das</button>
+        </div>
+        <div class="flash-actions" style="margin-top:14px; max-width:520px; margin-left:auto; margin-right:auto;">
+          <button class="btn ghost" id="atPrev" type="button">← Zurück</button>
+          <button class="btn ghost" id="atNext" type="button">Weiter →</button>
+        </div>
+      </div>
     </div>
   </section>
+
+
 </div>
 
 <script>
@@ -536,10 +599,18 @@ const LS_QUIZ = 'a2p_quiz_history_v1';
 const LS_SATZ = 'a2p_satz_progress_v1';
 
 function loadState(key, fallback){
-  try{ const raw = localStorage.getItem(key); return raw? JSON.parse(raw) : fallback; }
-  catch(e){ return fallback; }
+  try{
+    if(typeof localStorage === 'undefined') return fallback;
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  }catch(e){ return fallback; }
 }
-function saveState(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
+function saveState(key, val){
+  try{
+    if(typeof localStorage === 'undefined') return;
+    localStorage.setItem(key, JSON.stringify(val));
+  }catch(e){}
+}
 
 let progress = loadState(LS_KEY, {});   // { [id]: {box:0-5, correct:0, wrong:0} }
 let quizHistory = loadState(LS_QUIZ, []); // [{date,mode,dir,level,score,total}]
@@ -561,15 +632,21 @@ function bump(id, correct){
 
 /* ===================== THEME & AUDIO ===================== */
 const LS_DARK = 'a2p_vocab_dark_v1';
+function safeGetLS(key){
+  try{ return localStorage.getItem(key); }catch(e){ return null; }
+}
+function safeSetLS(key, val){
+  try{ localStorage.setItem(key, val); }catch(e){}
+}
 function applyTheme(){
-  const dark = localStorage.getItem(LS_DARK) === '1';
+  const dark = safeGetLS(LS_DARK) === '1';
   document.body.classList.toggle('dark', dark);
   const btn = document.getElementById('darkModeToggle');
   if(btn) btn.textContent = dark ? '☀️ Light Mode' : '🌙 Dark Mode';
 }
 document.getElementById('darkModeToggle').addEventListener('click', ()=>{
   const isDark = !document.body.classList.contains('dark');
-  localStorage.setItem(LS_DARK, isDark ? '1' : '0');
+  safeSetLS(LS_DARK, isDark ? '1' : '0');
   applyTheme();
 });
 applyTheme();
@@ -598,7 +675,6 @@ document.querySelectorAll('nav.tabs button').forEach(btn=>{
     document.querySelectorAll('section.view').forEach(v=>v.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('view-'+btn.dataset.view).classList.add('active');
-    if(btn.dataset.view === 'stats') renderStats();
   });
 });
 
@@ -686,21 +762,55 @@ function renderBox(v){
   }
 }
 
+let fcSwiped = false;
 document.getElementById('flashcard').addEventListener('click', ()=>{
+  if(fcSwiped){ fcSwiped = false; return; }
   if(deck.length===0) return;
   flipped = !flipped;
   const v = deck[deckIdx];
   if(flipped) renderBack(v); else renderFront(v);
 });
-function nextCard(){ deckIdx = (deckIdx+1) % Math.max(deck.length,1); showCard(); }
-document.getElementById('fcKnow').addEventListener('click', ()=>{
-  if(deck.length===0) return;
-  bump(deck[deckIdx].id, true); nextCard();
+function nextCard(){ if(deck.length===0) return; deckIdx = (deckIdx+1) % Math.max(deck.length,1); showCard(); }
+function prevCard(){ if(deck.length===0) return; deckIdx = (deckIdx-1+deck.length) % Math.max(deck.length,1); showCard(); }
+
+document.getElementById('fcNext').addEventListener('click', nextCard);
+document.getElementById('fcPrev').addEventListener('click', prevCard);
+
+/* Keyboard navigation: left/right arrows, only when Karteikarten view is active */
+document.addEventListener('keydown', (e)=>{
+  const learnView = document.getElementById('view-learn');
+  if(!learnView.classList.contains('active')) return;
+  const activeTag = document.activeElement && document.activeElement.tagName;
+  if(activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') return;
+  if(e.key === 'ArrowRight'){ e.preventDefault(); nextCard(); }
+  else if(e.key === 'ArrowLeft'){ e.preventDefault(); prevCard(); }
 });
-document.getElementById('fcWeak').addEventListener('click', ()=>{
-  if(deck.length===0) return;
-  bump(deck[deckIdx].id, false); nextCard();
-});
+
+/* Swipe navigation on mobile */
+(function(){
+  const fc = document.getElementById('flashcard');
+  let touchStartX = 0, touchStartY = 0, touchEndX = 0, touchEndY = 0;
+  fc.addEventListener('touchstart', (e)=>{
+    touchStartX = touchEndX = e.changedTouches[0].screenX;
+    touchStartY = touchEndY = e.changedTouches[0].screenY;
+  }, {passive:true});
+  fc.addEventListener('touchmove', (e)=>{
+    touchEndX = e.changedTouches[0].screenX;
+    touchEndY = e.changedTouches[0].screenY;
+    if(Math.abs(touchEndX - touchStartX) > 12) fcSwiped = true;
+  }, {passive:true});
+  fc.addEventListener('touchend', ()=>{
+    const dx = touchEndX - touchStartX;
+    const dy = touchEndY - touchStartY;
+    if(fcSwiped && Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)){
+      if(dx < 0) nextCard(); else prevCard();
+    } else {
+      fcSwiped = false;
+    }
+    touchStartX = touchEndX = touchStartY = touchEndY = 0;
+  });
+})();
+
 document.getElementById('learnLevel').addEventListener('change', buildDeck);
 document.getElementById('learnUnit').addEventListener('change', buildDeck);
 document.getElementById('learnOnlyWeak').addEventListener('change', buildDeck);
@@ -1209,56 +1319,163 @@ function bumpSatz(type, ok){
 document.getElementById('satzGood').addEventListener('click', ()=>{ bumpSatz(currentSatz.type, true); renderSatzWrite(); });
 document.getElementById('satzBad').addEventListener('click', ()=>{ bumpSatz(currentSatz.type, false); renderSatzWrite(); });
 
-/* ===================== STATS ===================== */
-function renderStats(){
-  const levels = ['A1','A2','B1'].concat(customVocab.length ? ['EIGENE'] : []);
-  let wordsHtml = '';
-  levels.forEach(lvl=>{
-    const items = allVocab().filter(v=>v.lvl===lvl);
-    const learned = items.filter(v=>getBox(v.id)>=4).length;
-    const pct = items.length ? Math.round(100*learned/items.length) : 0;
-    wordsHtml += '<div style="margin-bottom:10px;"><span class="pill '+lvl+'">'+lvl+'</span> '
-      + learned + ' / ' + items.length + ' gelernt (' + pct + '%)'
-      + '<div class="stat-bar"><div style="width:'+pct+'%;"></div></div></div>';
+/* ===================== ARTIKEL TRAINER ===================== */
+let atDeck = [];
+let atIdx = 0;
+let atAnswered = false;
+
+function filteredArtikelVocab(){
+  const level = document.getElementById('atLevel').value;
+  const unit = document.getElementById('atUnit').value;
+  const onlyWeak = document.getElementById('atOnlyWeak').value === '1';
+  const search = document.getElementById('atSearch').value.trim();
+  let list = filteredVocab({level, unit, onlyWeak, search});
+  // only nouns with a clear der/die/das article
+  list = list.filter(v => v.a && (v.a === 'der' || v.a === 'die' || v.a === 'das'));
+  return list;
+}
+
+function buildArtikelDeck(){
+  atDeck = shuffle(filteredArtikelVocab());
+  atIdx = 0;
+  atAnswered = false;
+  document.getElementById('atCount').textContent = atDeck.length + ' Nomen in dieser Auswahl';
+  showArtikelCard();
+}
+
+function showArtikelCard(){
+  atAnswered = false;
+  const feedback = document.getElementById('atFeedback');
+  feedback.textContent = '';
+  feedback.style.color = '';
+  document.querySelectorAll('#atOpts .opt-btn').forEach(b=>{
+    b.classList.remove('correct','wrong');
+    b.style.pointerEvents = '';
   });
-  document.getElementById('statsWords').innerHTML = wordsHtml || '<span class="muted">Noch keine Daten.</span>';
-
-  if(quizHistory.length){
-    let qh = '<ul style="padding-left:18px; margin:0;">';
-    quizHistory.slice(0,10).forEach(q=>{
-      qh += '<li>' + q.date + ' · ' + q.level + ' · ' + q.dir + ' — ' + q.score + '/' + q.total + '</li>';
-    });
-    qh += '</ul>';
-    document.getElementById('statsQuiz').innerHTML = qh;
-  } else {
-    document.getElementById('statsQuiz').innerHTML = '<span class="muted">Noch kein Quiz gespielt.</span>';
+  if(atDeck.length === 0){
+    document.getElementById('atWord').textContent = 'Keine Nomen gefunden';
+    document.getElementById('atHint').textContent = '';
+    document.getElementById('atLvl').textContent = '–';
+    document.getElementById('atUnitLabel').textContent = '';
+    document.getElementById('atBox').innerHTML = '';
+    return;
   }
-
-  const satzKeys = Object.keys(satzProgress);
-  if(satzKeys.length){
-    let sh = '<ul style="padding-left:18px; margin:0;">';
-    satzKeys.forEach(k=>{
-      const s = satzProgress[k];
-      sh += '<li>' + k + ' — ✅ ' + s.good + ' · 🔁 ' + s.bad + '</li>';
-    });
-    sh += '</ul>';
-    document.getElementById('statsSatz').innerHTML = sh;
-  } else {
-    document.getElementById('statsSatz').innerHTML = '<span class="muted">Noch keine Satzpraxis absolviert.</span>';
+  if(atIdx >= atDeck.length) atIdx = 0;
+  if(atIdx < 0) atIdx = atDeck.length - 1;
+  const v = atDeck[atIdx];
+  document.getElementById('atLvl').textContent = v.lvl;
+  document.getElementById('atLvl').className = 'pill ' + v.lvl;
+  document.getElementById('atUnitLabel').textContent = 'Kapitel ' + v.u;
+  document.getElementById('atWord').textContent = v.b;
+  document.getElementById('atHint').textContent = v.e ? (v.bn ? v.bn + ' — ' + v.e : v.e) : (v.bn || '');
+  // box meter
+  const box = getBox(v.id);
+  const el = document.getElementById('atBox');
+  el.innerHTML = '';
+  for(let i=0;i<5;i++){
+    const s = document.createElement('span');
+    if(i<box) s.className='on';
+    el.appendChild(s);
   }
 }
-document.getElementById('resetProgress').addEventListener('click', ()=>{
-  if(confirm('Gesamten Lernfortschritt wirklich löschen?')){
-    localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_QUIZ); localStorage.removeItem(LS_SATZ);
-    progress = {}; quizHistory = []; satzProgress = {};
-    renderStats(); buildDeck();
+
+function answerArtikel(chosen){
+  if(atAnswered || atDeck.length === 0) return;
+  atAnswered = true;
+  const v = atDeck[atIdx];
+  const ok = chosen === v.a;
+  const feedback = document.getElementById('atFeedback');
+  document.querySelectorAll('#atOpts .opt-btn').forEach(b=>{
+    b.style.pointerEvents = 'none';
+    if(b.dataset.art === v.a) b.classList.add('correct');
+    if(b.dataset.art === chosen && !ok) b.classList.add('wrong');
+  });
+  if(ok){
+    feedback.style.color = 'var(--good)';
+    feedback.textContent = '✅ Richtig! ' + v.a + ' ' + v.b;
+  } else {
+    feedback.style.color = 'var(--bad)';
+    feedback.textContent = '❌ Falsch. Richtige Antwort: ' + v.a + ' ' + v.b;
   }
+  bump(v.id, ok);
+  // refresh box
+  const box = getBox(v.id);
+  const el = document.getElementById('atBox');
+  el.innerHTML = '';
+  for(let i=0;i<5;i++){
+    const s = document.createElement('span');
+    if(i<box) s.className='on';
+    el.appendChild(s);
+  }
+}
+
+document.getElementById('atOpts').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.opt-btn');
+  if(!btn || !btn.dataset.art) return;
+  answerArtikel(btn.dataset.art);
+});
+function nextArtikelCard(){
+  if(atDeck.length===0) return;
+  atIdx = (atIdx + 1) % atDeck.length;
+  showArtikelCard();
+}
+function prevArtikelCard(){
+  if(atDeck.length===0) return;
+  atIdx = (atIdx - 1 + atDeck.length) % atDeck.length;
+  showArtikelCard();
+}
+document.getElementById('atNext').addEventListener('click', nextArtikelCard);
+document.getElementById('atPrev').addEventListener('click', prevArtikelCard);
+
+/* Keyboard navigation: left/right arrows, only when Artikel Trainer view is active */
+document.addEventListener('keydown', (e)=>{
+  const artikelView = document.getElementById('view-artikel');
+  if(!artikelView.classList.contains('active')) return;
+  const activeTag = document.activeElement && document.activeElement.tagName;
+  if(activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') return;
+  if(e.key === 'ArrowRight'){ e.preventDefault(); nextArtikelCard(); }
+  else if(e.key === 'ArrowLeft'){ e.preventDefault(); prevArtikelCard(); }
+});
+
+/* Swipe navigation on mobile */
+(function(){
+  const atCard = document.getElementById('atCard');
+  let atSwiped = false;
+  let touchStartX = 0, touchStartY = 0, touchEndX = 0, touchEndY = 0;
+  atCard.addEventListener('touchstart', (e)=>{
+    touchStartX = touchEndX = e.changedTouches[0].screenX;
+    touchStartY = touchEndY = e.changedTouches[0].screenY;
+    atSwiped = false;
+  }, {passive:true});
+  atCard.addEventListener('touchmove', (e)=>{
+    touchEndX = e.changedTouches[0].screenX;
+    touchEndY = e.changedTouches[0].screenY;
+    if(Math.abs(touchEndX - touchStartX) > 12) atSwiped = true;
+  }, {passive:true});
+  atCard.addEventListener('touchend', ()=>{
+    const dx = touchEndX - touchStartX;
+    const dy = touchEndY - touchStartY;
+    if(atSwiped && Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)){
+      if(dx < 0) nextArtikelCard(); else prevArtikelCard();
+    }
+    atSwiped = false;
+    touchStartX = touchEndX = touchStartY = touchEndY = 0;
+  });
+})();
+
+document.getElementById('atLevel').addEventListener('change', buildArtikelDeck);
+document.getElementById('atUnit').addEventListener('change', buildArtikelDeck);
+document.getElementById('atOnlyWeak').addEventListener('change', buildArtikelDeck);
+document.getElementById('atShuffle').addEventListener('click', buildArtikelDeck);
+let atSearchTimer;
+document.getElementById('atSearch').addEventListener('input', ()=>{
+  clearTimeout(atSearchTimer); atSearchTimer = setTimeout(buildArtikelDeck, 250);
 });
 
 /* ===================== INIT ===================== */
 function populateUnitSelects(){
   const units = [...new Set(VOCAB.map(v=>v.u))].filter(u=>u && u!=='–').sort((a,b)=>parseInt(a)-parseInt(b));
-  ['learnUnit','tableUnit','quizUnit'].forEach(id=>{
+  ['learnUnit','tableUnit','quizUnit','atUnit'].forEach(id=>{
     const sel = document.getElementById(id);
     units.forEach(u=>{
       const o = document.createElement('option');
@@ -1272,6 +1489,7 @@ buildDeck();
 buildTable();
 renderCustomList();
 renderSatzBuild();
+buildArtikelDeck();
 </script>
 </body>
 </html>
